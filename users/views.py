@@ -1,12 +1,19 @@
-from .models import User, UserDetail
-from .serializers import UserSerializer, UserDetailSerializer
+from .models import User, UserDetail, Product
+from .serializers import UserSerializer, UserDetailSerializer, ProductSerializer
 from rest_framework import viewsets
 from rest_framework.pagination import CursorPagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = UserDetail.objects.all()
-    serializer_class = UserDetailSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "id"
+    # pagination_class = CursorPagination
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     lookup_field = "id"
     # pagination_class = CursorPagination
 

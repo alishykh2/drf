@@ -16,4 +16,11 @@ class User(models.Model):
 class UserDetail(models.Model):
     phoneNo = models.CharField(max_length=255)
     number = models.CharField(max_length=255)
-    user = models.OneToOneField(User, related_name="user", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, related_name="userDetail", on_delete=models.CASCADE
+    )
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

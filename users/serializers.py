@@ -1,30 +1,37 @@
 from rest_framework import serializers
-from .models import User, UserDetail
+from .models import User, UserDetail, Product
 
 
-class UserSerializer(serializers.ModelSerializer):
-    # user = UserDetailSerializer()
-
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Product
         fields = "__all__"
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=True)
-
     class Meta:
         model = UserDetail
-        fields = "__all__"
+        fields = ["phoneNo", "number"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    product_set = ProductSerializer(many=True, read_only=True)
+    userDetail = UserDetailSerializer(required=True)
+
+    class Meta:
+        model = User
+        fields = ["id", "firstName", "lastName", "age", "userDetail", "product_set"]
 
     def create(self, validated_data):
-
-        user_data = validated_data.pop("user")
-        user = UserSerializer.create(UserSerializer(), validated_data=user_data)
-        userDetail, created = UserDetail.objects.update_or_create(
-            user=user,
-            phoneNo=validated_data.pop("phoneNo"),
-            number=validated_data.pop("number"),
+        print(validated_data)
+        user_data = validated_data.pop("userDetail")
+        user = User(
+            firstName=validated_data["firstName"],
+            lastName=validated_data["lastName"],
+            age=validated_data["age"],
         )
-        print(created)
-        return userDetail
+        user.save()
+        user_data["user"] = user
+        UserDetailSerializer.create(UserDetailSerializer(), validated_data=user_data)
+
+        return user
