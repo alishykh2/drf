@@ -1,11 +1,23 @@
 from rest_framework import serializers
-from .models import User, UserDetail, Product
+from .models import User, UserDetail, Product, Category
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+
     class Meta:
         model = Product
         fields = "__all__"
+
+    def to_representation(self, obj):
+        self.fields["category"] = CategorySerializer(many=True, read_only=True)
+        return super().to_representation(obj)
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

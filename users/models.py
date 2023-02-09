@@ -21,6 +21,11 @@ class UserDetail(models.Model):
     )
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ManyToManyField(Category)
